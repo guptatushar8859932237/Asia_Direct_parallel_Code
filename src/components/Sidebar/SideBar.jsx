@@ -35,11 +35,6 @@ const routes = [
     icon: <SpeedOutlinedIcon />,
   },
   {
-    path: "/Admin/billing",
-    name: "Invoice",
-    icon: <AccountBalanceIcon />,
-  },
-  {
     path: "",
     name: "Manage Invoices", 
     icon: <FlightOutlinedIcon />,
@@ -80,6 +75,11 @@ const routes = [
         path: "/Admin/order",
         name: "Freight Orders",
         icon: <ShoppingCartOutlinedIcon />,
+      },
+      {
+        path: "/Admin/manage-shipment",
+        name: "Shipments",
+        icon: <PeopleAltOutlinedIcon />,
       },
     ],
   },
@@ -139,7 +139,6 @@ const routes = [
         name: "Excel",
         icon: <DriveFileMoveOutlinedIcon />,
       },
-
     ],
   },
   {
@@ -150,11 +149,6 @@ const routes = [
     {
     path: "/Admin/manage-customer",
     name: "Manage Customers",
-    icon: <PeopleAltOutlinedIcon />,
-  },
-  {
-    path: "/Admin/manage-shipment",
-    name: "Manage Shipments",
     icon: <PeopleAltOutlinedIcon />,
   },
 ];

@@ -243,7 +243,7 @@ export default function Managefreight() {
   let day = String(today.getDate()).padStart(2, "0");
   let formattedDate = `${year}-${month}-${day}`;
   const handleupdateapipost = (freight_id) => {
-    console.log(freight_id);
+    console.log(inputdata.client_ref);
     const formdata = new FormData();
     formdata.append("date", formattedDate);
     formdata.append("id", inputdata.freight_id);
@@ -503,24 +503,25 @@ export default function Managefreight() {
     }
   };
   const postData = () => {
-   const postdata ={
-    // "status":"3", 
-    priority:data1.priority, 
-    origin:data1.origin, 
-    destination:data1.destination, 
-    startDate:data1.startDate, 
-    endDate:data1.endDate, 
-    freightType:data1.freight, 
-    freightSpeed:data1.type
-   }
-   axios.post(`${process.env.REACT_APP_BASE_URL}freight-list`,postdata).then((response)=>{
-    if(response.data.success===true){
-      closeModal()
-      setData(response.data.data)
-
-    }
-  }).catch((error)=>
-console.log(error.response.data))
+    const postdata = {
+      // "status":"3",
+      priority: data1.priority,
+      origin: data1.origin,
+      destination: data1.destination,
+      startDate: data1.startDate,
+      endDate: data1.endDate,
+      freightType: data1.freight,
+      freightSpeed: data1.type,
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}freight-list`, postdata)
+      .then((response) => {
+        if (response.data.success === true) {
+          closeModal();
+          setData(response.data.data);
+        }
+      })
+      .catch((error) => console.log(error.response.data));
   };
   const getClient = () => {
     axios
@@ -2200,24 +2201,32 @@ console.log(error.response.data))
                   <div className="row mb-3">
                     <div className="col-6">
                       <label>Freight</label>
-                      <select name="freight" onChange={handlechange} className="form-control">
+                      <select
+                        name="freight"
+                        onChange={handlechange}
+                        className="form-control"
+                      >
                         <option value="">Select...</option>
                         <option value="Sea">Sea</option>
                         <option value="Air">Air</option>
                         <option value="Road">Road</option>
                       </select>
                     </div>
-                    <div className="col-6">
+                    {/* <div className="col-6">
                       <label>freight Type </label>
-                      <select name="type" onChange={handlechange} className="form-control">
+                      <select
+                        name="type"
+                        onChange={handlechange}
+                        className="form-control"
+                      >
                         <option value="">Select...</option>
                         <option value="express">Express</option>
                         <option value="normal">Normal</option>
                       </select>
-                    </div>
+                    </div> */}
                   </div>
                   <Button variant="contained" onClick={postData}>
-                    Filter Data
+                    Apply
                   </Button>
                 </Box>
               </Modal>

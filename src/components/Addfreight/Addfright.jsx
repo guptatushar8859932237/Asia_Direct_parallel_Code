@@ -112,6 +112,8 @@ const Addfright = () => {
     handlevalidate(data);
   };
   const handlevalidate = (value) => {
+
+  console.log(selectedOption)
     let error = {};
     if (!value.type) {
       error.type = "Freight type is required";
@@ -251,7 +253,7 @@ const Addfright = () => {
     formdata.append("shipper_name", data.shipper_name);
     formdata.append("insurance", data.insurance);
     formdata.append("shipment_ref", data.shipment_ref);
-    formdata.append("client_ref_name", data.client_ref_name);
+    formdata.append("client_ref_name", selectedOption.clientrefval);
     formdata.append("fcl_lcl", data.fcl_lcl);
     // for (let i = 0; i < formData.supplier_invoice.length; i++) {
     //   formdata.append("supplier_invoice", formData.supplier_invoice[i]);
@@ -331,6 +333,7 @@ const Addfright = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}client-list`)
       .then((response) => {
+        console.log(response.data.data);
         setLcientlist(response.data.data);
       })
       .catch((error) => {
@@ -340,6 +343,7 @@ const Addfright = () => {
   const options = lcientlist.map((item) => ({
     value: item.id,
     label: item.full_name,
+    clientrefval:item.client_ref
   }));
   const customStyles = {
     control: (provided) => ({
@@ -531,6 +535,7 @@ const getdataap =() =>{
                           type="text"
                           className="w-100 rounded"
                           name="client_ref_name"
+                          value={selectedOption?.clientrefval}
                           placeholder="Client Reference"
                           onChange={handlechange}
                         />

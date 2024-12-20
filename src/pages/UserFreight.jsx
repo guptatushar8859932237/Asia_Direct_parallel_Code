@@ -6,11 +6,19 @@ import { useNavigate } from "react-router-dom";
 import FormControl from "@mui/material/FormControl";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { FaEdit } from "react-icons/fa";
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CalculateIcon from '@mui/icons-material/Calculate';
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CalculateIcon from "@mui/icons-material/Calculate";
 import Swal from "sweetalert2";
-import { FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Modal,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 const pageSize = 5;
 export default function UserFreight() {
   const naviagte = useNavigate();
@@ -19,8 +27,10 @@ export default function UserFreight() {
   const [dataId, setDataId] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const [updatedata, setUpdatedata] = useState([]);
-  const [apidata,setApidata] = useState([]);
+  const [apidata, setApidata] = useState([]);
+  const [data1, setData1] = useState({});
   const [clientdata, setClientdata] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [clearings, setClearings] = useState({});
   const [selectfile1, setSelectfile1] = useState(null);
   const [country, setCountry] = useState([]);
@@ -162,8 +172,8 @@ export default function UserFreight() {
       sea_freight_option: getUSer.sea_freight_option,
       road_freight_option: getUSer.road_freight_option,
     }));
-    console.log(getUSer.assign_to_clearing)
-    console.log(getUSer.insurance)
+    console.log(getUSer.assign_to_clearing);
+    console.log(getUSer.insurance);
   };
   console.log(inputdata.user_type);
   const handleupdateapi = (e) => {
@@ -421,14 +431,14 @@ export default function UserFreight() {
   const handlechangeradiouser22 = (e) => {
     setInputdata((prevData) => ({
       ...prevData,
-      insurance: e.target.value
-    }))
+      insurance: e.target.value,
+    }));
   };
   const handlechangeradiouser11 = (e) => {
     setInputdata((prevData) => ({
       ...prevData,
-      assign_to_clearing: e.target.value
-    }))
+      assign_to_clearing: e.target.value,
+    }));
   };
   const handlekey = (e) => {
     if (e.charCode < 48 || e.charCode > 57) {
@@ -446,17 +456,55 @@ export default function UserFreight() {
       setSelectfile1(file);
     }
   };
-  useEffect(()=>{
-    getdataap()
-  },[])
-  const getdataap =() =>{
-    axios.get(`${process.env.REACT_APP_BASE_URL}getCommodities`).then((response)=>{
-      console.log(response.data)
-      setApidata(response.data.data)
-    }).catch((error)=>{
-      console.log(error.response.data)
-    })
-  }
+  useEffect(() => {
+    getdataap();
+  }, []);
+  const getdataap = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}getCommodities`)
+      .then((response) => {
+        console.log(response.data);
+        setApidata(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleclickopenmodal = () => {
+    setIsModalOpen(true);
+  };
+  const postData = () => {
+    const posdata = {
+      priority: data1.priority,
+      origin: data1.origin,
+      destination: data1.destination,
+      startDate: data1.startDate,
+      endDate: data1.endDate,
+      freightType: data1.freight,
+      freightSpeed: data1.type,
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}new-freight-list`, posdata)
+      .then((response) => {
+        if(response.data.success===true){
+          closeModal()
+          setData(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+
+  const handlechange = (e) => {
+    const { name, value } = e.target;
+    setData1({ ...data1, [name]: value });
+  };
   return (
     <>
       <div className="wpWrapper">
@@ -475,6 +523,12 @@ export default function UserFreight() {
                       placeholder="Search"
                     ></input>
                   </div>
+                  <button
+                    className="dropdown-toggle me-2"
+                    onClick={handleclickopenmodal}
+                  >
+                    Filter
+                  </button>
                   <div className="dropdown">
                     <button
                       className="dropdown-toggle"
@@ -482,7 +536,7 @@ export default function UserFreight() {
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                     >
-                      Filter
+                      Status
                     </button>
                     <ul className="dropdown-menu">
                       <li className="filter_item">
@@ -865,7 +919,7 @@ export default function UserFreight() {
                                                   <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
                                                   <RadioGroup
                                                     aria-labelledby="demo-radio-buttons-group-label"
-                                                    name="shipment_origin" 
+                                                    name="shipment_origin"
                                                     value={
                                                       inputdata.shipment_origin
                                                     }
@@ -950,9 +1004,7 @@ export default function UserFreight() {
                                                   <RadioGroup
                                                     aria-labelledby="demo-radio-buttons-group-label"
                                                     name="user_type"
-                                                    value={
-                                                      inputdata.user_type
-                                                    }
+                                                    value={inputdata.user_type}
                                                     onChange={
                                                       handlechangeradiouserTyoe
                                                     }
@@ -992,13 +1044,19 @@ export default function UserFreight() {
                                                     <FormControlLabel
                                                       value="Yes"
                                                       control={<Radio />}
-                                                      checked={inputdata.assign_to_clearing === "Yes"}
+                                                      checked={
+                                                        inputdata.assign_to_clearing ===
+                                                        "Yes"
+                                                      }
                                                       label="Yes"
                                                     />
                                                     <FormControlLabel
                                                       value="No"
                                                       control={<Radio />}
-                                                      checked={inputdata.assign_to_clearing === "No"}
+                                                      checked={
+                                                        inputdata.assign_to_clearing ===
+                                                        "No"
+                                                      }
                                                       label="No"
                                                     />
                                                   </RadioGroup>
@@ -1022,14 +1080,20 @@ export default function UserFreight() {
                                                     >
                                                       <FormControlLabel
                                                         value="Yes"
-                                                        checked={inputdata.insurance === "Yes"}
+                                                        checked={
+                                                          inputdata.insurance ===
+                                                          "Yes"
+                                                        }
                                                         control={<Radio />}
                                                         label="Yes"
                                                       />
                                                       <FormControlLabel
                                                         value="No"
                                                         control={<Radio />}
-                                                        checked={inputdata.insurance === "No"}
+                                                        checked={
+                                                          inputdata.insurance ===
+                                                          "No"
+                                                        }
                                                         label="No"
                                                       />
                                                     </RadioGroup>
@@ -1058,13 +1122,9 @@ export default function UserFreight() {
                                                           <>
                                                             <option
                                                               key={index}
-                                                              value={
-                                                                option.id
-                                                              }
+                                                              value={option.id}
                                                             >
-                                                              {
-                                                                option.name
-                                                              }
+                                                              {option.name}
                                                             </option>
                                                           </>
                                                         );
@@ -1090,7 +1150,9 @@ export default function UserFreight() {
                                               <div className="row">
                                                 <div className="col-lg-6">
                                                   <div className="mb-3">
-                                                    <label>Port of Loading</label>
+                                                    <label>
+                                                      Port of Loading
+                                                    </label>
                                                     <input
                                                       type="text"
                                                       name="port_of_loading"
@@ -1136,13 +1198,9 @@ export default function UserFreight() {
                                                           <>
                                                             <option
                                                               key={index}
-                                                              value={
-                                                                option.id
-                                                              }
+                                                              value={option.id}
                                                             >
-                                                              {
-                                                                option.name
-                                                              }
+                                                              {option.name}
                                                             </option>
                                                           </>
                                                         );
@@ -1180,7 +1238,9 @@ export default function UserFreight() {
                                                     name="product_desc"
                                                     className="w-100"
                                                     onChange={handleupdateapi}
-                                                    value={inputdata.product_desc}
+                                                    value={
+                                                      inputdata.product_desc
+                                                    }
                                                   />
                                                 </div>
                                               </div>
@@ -1223,7 +1283,9 @@ export default function UserFreight() {
                                                   <select
                                                     name="package_type"
                                                     onChange={handleupdateapi}
-                                                    value={inputdata.package_type}
+                                                    value={
+                                                      inputdata.package_type
+                                                    }
                                                   >
                                                     <option value="">
                                                       Select...
@@ -1311,8 +1373,9 @@ export default function UserFreight() {
                                                       Select...
                                                     </option>
                                                     <option value="supplierInvoice">
-                                                      Supplier Invoice / Quotation
-                                                      / Proforma Invoice
+                                                      Supplier Invoice /
+                                                      Quotation / Proforma
+                                                      Invoice
                                                     </option>
                                                     <option value="packingList">
                                                       Packing List
@@ -1332,21 +1395,18 @@ export default function UserFreight() {
                                                   <select
                                                     name="fcl_lcl"
                                                     onChange={handleupdateapi}
-                                                    value={
-                                                      inputdata.fcl_lcl
-                                                    }
+                                                    value={inputdata.fcl_lcl}
                                                   >
                                                     <option value="">
                                                       Select...
                                                     </option>
-                                                   
+
                                                     <option value="FCL">
                                                       FCL
                                                     </option>
                                                     <option value="LCL">
                                                       LCL
                                                     </option>
-                                                   
                                                   </select>
                                                 </div>
                                               </div>
@@ -1373,15 +1433,22 @@ export default function UserFreight() {
                                                     className="mb-3"
                                                   >
                                                     <option>Select...</option>
-                                                    {
-                                                    apidata && apidata.length>0 &&  apidata.map((item,index)=>{
-                                                      return(
-                                                        <>
-                                                        <option key={index} value={item.id}>{item.name}</option>
-                                                        </>
-                                                      )
-                                                    })
-                                                    }
+                                                    {apidata &&
+                                                      apidata.length > 0 &&
+                                                      apidata.map(
+                                                        (item, index) => {
+                                                          return (
+                                                            <>
+                                                              <option
+                                                                key={index}
+                                                                value={item.id}
+                                                              >
+                                                                {item.name}
+                                                              </option>
+                                                            </>
+                                                          );
+                                                        }
+                                                      )}
                                                   </select>
                                                 </div>
                                               </div>
@@ -1391,7 +1458,9 @@ export default function UserFreight() {
                                                   <input
                                                     type="file"
                                                     name="document"
-                                                    onChange={handleupdateapifile}
+                                                    onChange={
+                                                      handleupdateapifile
+                                                    }
                                                     className="mb-3"
                                                   />
                                                 </div>
@@ -1452,6 +1521,175 @@ export default function UserFreight() {
           </div>
           <ToastContainer />
         </div>
+        <Modal
+          open={isModalOpen}
+          onClose={closeModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              height: 500,
+              overflow: "scroll",
+              width: 600,
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
+            <h2 id="modal-modal-title">Filter</h2>
+            <div className="row my-3  ">
+              <div className="col-6">
+                <label>Delivery Type</label>
+                <select
+                  name="type"
+                  onChange={handlechange}
+                  className="form-control"
+                >
+                  <option value="">Select</option>
+                  <option value="express">Express</option>
+                  <option value="normal">Consolidation</option>
+                </select>
+              </div>
+              <div className="col-6">
+                <label>Priority </label>
+                <div className="shipRefer1 d-flex">
+                  <div>
+                    <input
+                      type="radio"
+                      id="shipper"
+                      name="priority"
+                      style={{ cursor: "pointer" }}
+                      value="High"
+                      onChange={handlechange}
+                    />
+                    <label htmlFor="shipper">High</label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="shipper2"
+                      style={{ cursor: "pointer" }}
+                      name="priority"
+                      value="Medium"
+                      onChange={handlechange}
+                    />
+                    <label htmlFor="consignee">Medium</label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="shipper3"
+                      name="priority"
+                      style={{ cursor: "pointer" }}
+                      value="Low"
+                      onChange={handlechange}
+                    />
+                    <label htmlFor="mediumPr">Low</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="row mb-3">
+              <div className="col-6">
+                <label>Country of Origin</label>
+                <select
+                  name="origin"
+                  onChange={handlechange}
+                  className="form-control"
+                >
+                  <option value="">Select</option>
+                  {updatedata &&
+                    updatedata.length > 0 &&
+                    updatedata.map((item, index) => {
+                      return (
+                        <>
+                          <option value={item.id}>{item.name}</option>
+                        </>
+                      );
+                    })}
+                </select>
+              </div>
+              <div className="col-6">
+                <label>Delivery to Country </label>
+                <select
+                  name="destination"
+                  onChange={handlechange}
+                  className="form-control"
+                >
+                  <option value="">Select</option>
+                  {updatedata &&
+                    updatedata.length > 0 &&
+                    updatedata.map((item, index) => {
+                      return (
+                        <>
+                          <option value={item.id}>{item.name}</option>
+                        </>
+                      );
+                    })}
+                </select>
+              </div>
+            </div>
+            <div className="row mb-3">
+              <div className="col-6">
+                <label>Start Date</label>
+                <input
+                  type="date"
+                  id="shipper3"
+                  name="startDate"
+                  style={{ cursor: "pointer" }}
+                  className="form-control"
+                  onChange={handlechange}
+                />
+              </div>
+              <div className="col-6">
+                <label>End Date </label>
+                <input
+                  type="date"
+                  id="shipper3"
+                  name="endDate"
+                  style={{ cursor: "pointer" }}
+                  className="form-control"
+                  onChange={handlechange}
+                />
+              </div>
+            </div>
+            <div className="row mb-3">
+              <div className="col-6">
+                <label>Freight</label>
+                <select
+                  name="freight"
+                  onChange={handlechange}
+                  className="form-control"
+                >
+                  <option value="">Select...</option>
+                  <option value="Sea">Sea</option>
+                  <option value="Air">Air</option>
+                  <option value="Road">Road</option>
+                </select>
+              </div>
+              <div className="col-6">
+                <label>freight Type </label>
+                <select
+                  name="type"
+                  onChange={handlechange}
+                  className="form-control"
+                >
+                  <option value="">Select...</option>
+                  <option value="express">Express</option>
+                  <option value="normal">Normal</option>
+                </select>
+              </div>
+            </div>
+            <Button variant="contained" onClick={postData}>
+              Apply
+            </Button>
+          </Box>
+        </Modal>
       </div>
     </>
   );

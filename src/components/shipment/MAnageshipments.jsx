@@ -202,18 +202,17 @@ export default function MAnageshipments() {
               <div className="table-responsive mt-2">
                 <table className="table table-striped tableICon">
                   <thead>
-                    <tr>
-                      <th>Sr.No.</th>
+                    {/* <tr>
                       <th>Waybill</th>
-                      <th>Freight</th>
                       <th>Vessel</th>
-                      <th>POL</th>
-                      <th>POD</th>
+                      <th>Freight</th>
                       <th>ETD</th>
                       <th>ATD</th>
+                      <th>POL</th>
+                      <th>POD</th>
                       <th>Status</th>
                       <th>Action</th>
-                    </tr>
+                    </tr> */}
                   </thead>
                   <tbody>
                     {currentdata &&
@@ -222,15 +221,50 @@ export default function MAnageshipments() {
                         console.log(item);
                         return (
                           <>
-                            <tr key={item.id}>
-                              <td>{startIndex + index + 1}</td>
+                          <tr key={index}>
+            <td>{item.waybill} </td>
+            <td>
+              <p>{item.vessel}</p>
+              <p>{item.freight}</p>
+            </td>
+            <td>
+              <div className="palceLand">
+                <div>
+                   <p>{item.port_of_loading}</p>
+                   <p>{item.ETD}</p>
+                </div>
+                <div>
+                  <i className="fa fa-long-arrow-right" aria-hidden="true" />
+                </div>
+                <div>
+                  <p>{item.port_of_discharge}</p>
+                  <p>{item.ATD}</p>
+                </div>
+              </div>
+            </td>
+        <td>    <p>{item.status}</p></td>
+            {" "}
+            <td className="w-25">
+              <div className="progress">
+                <div
+                  className="progress-bar progress-bar-striped bg-success"
+                  role="progressbar"
+                  style={{ width: "25%" }}
+                  aria-valuenow={25}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
+              </div>
+            </td>
+          </tr>
+                            {/* <tr key={item.id}>
                               <td>{item.waybill}</td>
-                              <td>{item.freight}</td>
                               <td>{item.vessel}</td>
-                              <td>{item.port_of_loading}</td>
-                              <td>{item.port_of_discharge}</td>
+                              <td>{item.freight}</td>
                               <td>{item.ETD}</td>
                               <td>{item.ATD}</td>
+                              <td>{item.port_of_loading}</td>
+                              <td>{item.port_of_discharge}</td>
                               <td>{item.status}</td>
                               <td>
                                 <FaEdit
@@ -258,7 +292,7 @@ export default function MAnageshipments() {
                                   }}
                                 />
                               </td>
-                            </tr>
+                            </tr> */}
                           </>
                         );
                       })}
@@ -565,6 +599,205 @@ export default function MAnageshipments() {
 
                 <ToastContainer />
               </div>
+              <section className="tableMain">
+  <div className="container">
+    <div className="row table-responsive ">
+      <table className="table-striped">
+        {/* <thead>
+                  <tr>
+                      <th>Waybill</th>
+                      <th>Freigt</th>
+                      <th>Vessel</th>
+                      <th>POL</th>
+                      <th>POD</th>
+                      <th>ETD</th>
+                      <th>ATD</th>
+                      <th>Status</th>
+                      <th>Progress</th>
+                  </tr>
+              </thead> */}
+        {/* <tbody>
+          <tr>
+            <td>FR-0012510 </td>
+            <td>
+              <p>Air</p>
+              <p>Fly Emirates</p>
+            </td>
+            <td>
+              <div className="palceLand">
+                <div>
+                  <p>Mumbai, Ind</p>
+                  <p> 15 Dec 2024 </p>
+                </div>
+                <div>
+                  <i className="fa fa-long-arrow-right" aria-hidden="true" />
+                </div>
+                <div>
+                  <p>SheHzhen, China</p>
+                  <p>22 Dec 2024</p>
+                </div>
+              </div>
+            </td>
+            <td>In Transit</td>
+            <td>
+              <div className="progress">
+                <div
+                  className="progress-bar progress-bar-striped bg-success"
+                  role="progressbar"
+                  style={{ width: "25%" }}
+                  aria-valuenow={25}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>FR-0012510 </td>
+            <td>
+              <p>Air</p>
+              <p>Fly Emirates</p>
+            </td>
+            <td>
+              <div className="palceLand">
+                <div>
+                  <p>Mumbai, Ind</p>
+                  <p> 15 Dec 2024 </p>
+                </div>
+                <div>
+                  <i className="fa fa-long-arrow-right" aria-hidden="true" />
+                </div>
+                <div>
+                  <p>SheHzhen, China</p>
+                  <p>22 Dec 2024</p>
+                </div>
+              </div>
+            </td>
+            <td>In Transit</td>
+            <td>
+              <div className="progress">
+                <div
+                  className="progress-bar progress-bar-striped bg-info"
+                  role="progressbar"
+                  style={{ width: "50%" }}
+                  aria-valuenow={50}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>FR-0012510 </td>
+            <td>
+              <p>Air</p>
+              <p>Fly Emirates</p>
+            </td>
+            <td>
+              <div className="palceLand">
+                <div>
+                  <p>Mumbai, Ind</p>
+                  <p> 15 Dec 2024 </p>
+                </div>
+                <div>
+                  <i className="fa fa-long-arrow-right" aria-hidden="true" />
+                </div>
+                <div>
+                  <p>SheHzhen, China</p>
+                  <p>22 Dec 2024</p>
+                </div>
+              </div>
+            </td>
+            <td>In Transit</td>
+            <td>
+              <div className="progress">
+                <div
+                  className="progress-bar progress-bar-striped bg-danger"
+                  role="progressbar"
+                  style={{ width: "100%" }}
+                  aria-valuenow={100}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>FR-0012510 </td>
+            <td>
+              <p>Air</p>
+              <p>Fly Emirates</p>
+            </td>
+            <td>
+              <div className="palceLand">
+                <div>
+                  <p>Mumbai, Ind</p>
+                  <p> 15 Dec 2024 </p>
+                </div>
+                <div>
+                  <i className="fa fa-long-arrow-right" aria-hidden="true" />
+                </div>
+                <div>
+                  <p>SheHzhen, China</p>
+                  <p>22 Dec 2024</p>
+                </div>
+              </div>
+            </td>
+            <td>In Transit</td>
+            <td>
+              <div className="progress">
+                <div
+                  className="progress-bar progress-bar-striped bg-success"
+                  role="progressbar"
+                  style={{ width: "25%" }}
+                  aria-valuenow={25}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>FR-0012510 </td>
+            <td>
+              <p>Air</p>
+              <p>Fly Emirates</p>
+            </td>
+            <td>
+              <div className="palceLand">
+                <div>
+                  <p>Mumbai, Ind</p>
+                  <p> 15 Dec 2024 </p>
+                </div>
+                <div>
+                  <i className="fa fa-long-arrow-right" aria-hidden="true" />
+                </div>
+                <div>
+                  <p>SheHzhen, China</p>
+                  <p>22 Dec 2024</p>
+                </div>
+              </div>
+            </td>
+            <td>In Transit</td>
+            <td>
+              <div className="progress">
+                <div
+                  className="progress-bar progress-bar-striped bg-success"
+                  role="progressbar"
+                  style={{ width: "25%" }}
+                  aria-valuenow={25}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody> */}
+      </table>
+    </div>
+  </div>
+</section>
+
             </div>
           </div>
         </div>

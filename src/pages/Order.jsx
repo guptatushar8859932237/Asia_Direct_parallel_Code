@@ -9,6 +9,8 @@ export default function Order() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [inputvalue, setInputvalue] = useState([]);
   const [loader, setLoader] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [file, setFile] = useState(null);
@@ -80,7 +82,7 @@ export default function Order() {
       )
       .then((response) => {
         toast.success(response.data.message);
-        getorder()
+        getorder();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -99,10 +101,18 @@ export default function Order() {
       item?.client_name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.track_status?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.product_desc?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-      item?.collection_from_name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-      item?.nature_of_hazard?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-      item?.delivery_to_country?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-      item?.collection_from_country?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+      item?.collection_from_name
+        ?.toLowerCase()
+        ?.includes(searchQuery?.toLowerCase()) ||
+      item?.nature_of_hazard
+        ?.toLowerCase()
+        ?.includes(searchQuery?.toLowerCase()) ||
+      item?.delivery_to_country
+        ?.toLowerCase()
+        ?.includes(searchQuery?.toLowerCase()) ||
+      item?.collection_from_country
+        ?.toLowerCase()
+        ?.includes(searchQuery?.toLowerCase()) ||
       item?.hazardous?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.freight?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.freight?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
@@ -157,7 +167,7 @@ export default function Order() {
   const postData = () => {
     setLoader(true);
     closeModal();
-    if (file) {
+    if (file) {    
       const formdata = new FormData();
       formdata.append("file", file);
       axios
@@ -192,32 +202,7 @@ export default function Order() {
       setFile1(selectedFile);
     }
   };
-  const postData1 = () => {
-    setLoader(true);
-    closeModal1();
-    if (file1) {
-      const formdata = new FormData();
-      formdata.append("file", file1);
-      axios
-        .post(
-          `${process.env.REACT_APP_BASE_URL}UploadExcelFullOrderDetails`,
-          formdata
-        )
-        .then((response) => {
-          if (response.data.success == true) {
-            setLoader(false);
-            toast.success(response.data.message);
-            closeModal1();
-          }
-        })
-        .catch((error) => {
-          setLoader(false);
-          console.log(error.response.data);
-        });
-    } else {
-      console.log("No file selected");
-    }
-  };
+  
   useEffect(() => {
     getwarehouyse();
   }, []);
@@ -248,15 +233,55 @@ export default function Order() {
         console.log(error.response.data);
       });
   };
-const track12311 =(alldata)=>{
-  console.log([alldata])
-  if(alldata.added_by==="1"){
-    navigate('/Admin/shipping-estimate',{state: { data: [alldata] }})
-  }
-  else{
-    navigate("/Admin/shipping-estimate-client",{state:{data:[alldata]}})
-  }
-}
+  const track12311 = (alldata) => {
+    console.log([alldata]);
+    if (alldata.added_by === "1") {
+      navigate("/Admin/shipping-estimate", { state: { data: [alldata] } });
+    } else {
+      navigate("/Admin/shipping-estimate-client", {
+        state: { data: [alldata] },
+      });
+    }
+  };
+
+  useEffect(() => {
+    getcountry();
+  }, []);
+  const getcountry = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
+      .then((response) => {
+        console.log(response.data.data);
+        setCountries(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data.data);
+      });
+  };
+
+  const handlechange = (e) => {
+    const { name, value } = e.target;
+    setInputvalue({ ...inputvalue, [name]: value });
+  };
+
+  const postData1 = () => {
+    const postdat   ={
+      origin:inputvalue.origin,
+       destination:inputvalue.destination,
+        startDate:inputvalue.startDate,
+         endDate:inputvalue.endDate,
+          freightType:inputvalue.freight,
+           freightSpeed:inputvalue.type
+    }
+    axios.post(`${process.env.REACT_APP_BASE_URL}/order/details`,postdat).then((response)=>{
+      if(response.data.success===true){
+        closeModal1()
+        setData(response.data.data)
+      }
+    }).catch((error)=>{
+      console.log(error.response.data)
+    })
+  };
   return (
     <>
       {loader ? (
@@ -275,9 +300,15 @@ const track12311 =(alldata)=>{
                   </div>
                   <div className="d-flex justify-content-end align-items-center">
                     <div className="mx-2">
-                      <input className="my-1 py-1 rounded ps-1" value={searchQuery} placeholder="Search" onChange={handleSearch}></input>
+                      <input
+                        className="my-1 py-1 rounded ps-1"
+                        value={searchQuery}
+                        placeholder="Search"
+                        onChange={handleSearch}
+                      ></input>
                     </div>
                     <div className="">
+                      <button onClick={openModal1}>Filter</button>
                     </div>
                   </div>
                 </div>
@@ -361,7 +392,10 @@ const track12311 =(alldata)=>{
                                               <ul className="p-0 m-0">
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px" }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     track(item?.id);
                                                   }}
@@ -370,7 +404,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     track12311(item);
                                                   }}
@@ -379,7 +416,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     track123(item);
                                                   }}
@@ -388,7 +428,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     handledelivery(item?.id);
                                                   }}
@@ -397,7 +440,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     handlenavival(item?.id);
                                                   }}
@@ -406,7 +452,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     handleclicknaviwaybill(
                                                       item?.id
@@ -417,7 +466,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     handleclicknaviauthority(
                                                       item?.id
@@ -428,7 +480,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     handleclicknavibilloflaadding(
                                                       item?.id
@@ -439,7 +494,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer",fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     handleclicknavibilloflaadding11(
                                                       item?.id
@@ -450,7 +508,10 @@ const track12311 =(alldata)=>{
                                                 </li>
                                                 <li
                                                   className="page_list"
-                                                  style={{ cursor: "pointer" ,fontSize:"15px"  }}
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
                                                   onClick={() => {
                                                     handledeliveryEye(item?.id);
                                                   }}
@@ -470,9 +531,13 @@ const track12311 =(alldata)=>{
                                     <span className="dot bg-success me-2"></span>
                                     <label className="status mb-0">
                                       {item.track_status === null ? (
-                                        <p className="text-success mb-0">Accepted</p>
+                                        <p className="text-success mb-0">
+                                          Accepted
+                                        </p>
                                       ) : (
-                                        <p className="text-success mb-0">{item.track_status}</p>
+                                        <p className="text-success mb-0">
+                                          {item.track_status}
+                                        </p>
                                       )}
                                     </label>
                                   </div>
@@ -492,22 +557,22 @@ const track12311 =(alldata)=>{
                   </table>
                 </div>
                 <div className="text-center d-flex justify-content-end align-items-center">
-                    <button
-                     disabled={currentPage === 1}
-                      className="bg_page"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                    >
-                      <i class="fi fi-rr-angle-small-left page_icon"></i>
-                    </button>
-                    <span className="mx-2">{`Page ${currentPage} of ${totalPage}`}</span>
-                    <button
-                      disabled={currentPage === totalPage}
-                      className="bg_page"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                    >
-                      <i class="fi fi-rr-angle-small-right page_icon"></i>
-                    </button>
-                  </div>
+                  <button
+                    disabled={currentPage === 1}
+                    className="bg_page"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                  >
+                    <i class="fi fi-rr-angle-small-left page_icon"></i>
+                  </button>
+                  <span className="mx-2">{`Page ${currentPage} of ${totalPage}`}</span>
+                  <button
+                    disabled={currentPage === totalPage}
+                    className="bg_page"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                  >
+                    <i class="fi fi-rr-angle-small-right page_icon"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -557,23 +622,148 @@ const track12311 =(alldata)=>{
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            height: 300,
-            width: 450,
+            height: 500,
+            overflow: "scroll",
+            width: 550,
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
           }}
         >
-          <h2 id="modal-modal-title">Add Excel Delivery</h2>
-          <input
-            type="file"
-            accept=".xlsx,.xls"
-            onChange={handleFileChange1}
-            className="mb-3 border ps-2 py-2 rounded w-100"
-            style={{ display: "block", marginTop: "16px" }}
-          />
+          <h2 id="modal-modal-title">Filter</h2>
+          <div className="row my-3  ">
+            <div className="col-6">
+              <label>Delivery Type</label>
+              <select
+                name="type"
+                onChange={handlechange}
+                className="form-control"
+              >
+                <option value="">Select</option>
+                <option value="express">Express</option>
+                <option value="normal">Consolidation</option>
+              </select>
+            </div>
+            <div className="col-6">
+              <label>Priority </label>
+              <div className="shipRefer1 d-flex">
+                <div>
+                  <input
+                    type="radio"
+                    id="shipper"
+                    name="priority"
+                    style={{ cursor: "pointer" }}
+                    value="High"
+                    onChange={handlechange}
+                  />
+                  <label htmlFor="shipper">High</label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    id="shipper2"
+                    style={{ cursor: "pointer" }}
+                    name="priority"
+                    value="Medium"
+                    onChange={handlechange}
+                  />
+                  <label htmlFor="consignee">Medium</label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    id="shipper3"
+                    name="priority"
+                    style={{ cursor: "pointer" }}
+                    value="Low"
+                    onChange={handlechange}
+                  />
+                  <label htmlFor="mediumPr">Low</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-6">
+              <label>Country of Origin</label>
+              <select
+                name="origin"
+                onChange={handlechange}
+                className="form-control"
+              >
+                <option value="">Select</option>
+                {countries &&
+                  countries.length > 0 &&
+                  countries.map((item, index) => {
+                    return (
+                      <>
+                        <option value={item.id}  key={index}>{item.name}</option>
+                      </>
+                    );
+                  })}
+              </select>
+            </div>
+            <div className="col-6">
+              <label>Delivery to Country </label>
+              <select
+                name="destination"
+                onChange={handlechange}
+                className="form-control"
+              >
+                <option value="">Select</option>
+                {countries &&
+                  countries.length > 0 &&
+                  countries.map((item, index) => {
+                    return (
+                      <>
+                        <option value={item.id} key={index}>{item.name}</option>
+                      </>
+                    );
+                  })}
+              </select>
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-6">
+              <label>Start Date</label>
+              <input
+                type="date"
+                id="shipper3"
+                name="startDate"
+                style={{ cursor: "pointer" }}
+                className="form-control"
+                onChange={handlechange}
+              />
+            </div>
+            <div className="col-6">
+              <label>End Date </label>
+              <input
+                type="date"
+                id="shipper3"
+                name="endDate"
+                style={{ cursor: "pointer" }}
+                className="form-control"
+                onChange={handlechange}
+              />
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-6">
+              <label>Freight</label>
+              <select
+                name="freight"
+                onChange={handlechange}
+                className="form-control"
+              >
+                <option value="">Select...</option>
+                <option value="Sea">Sea</option>
+                <option value="Air">Air</option>
+                <option value="Road">Road</option>
+              </select>
+            </div>
+          </div>
           <Button variant="contained" onClick={postData1}>
-            Submit
+            Apply
           </Button>
         </Box>
       </Modal>

@@ -3936,3 +3936,47 @@ a.link.active svg {
 .consigneeBottom div {
   width: 50%;
 }
+
+section.tableMain thead {
+  background: #1b2245;
+  color: #fff;
+  /* padding: 10px 20px !important; */
+}
+
+/* .tableMain th{
+  padding: 20px;
+}
+/* .tableMain td{
+  padding: 20px;
+} */ 
+.tableMain tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.palceLand i {
+  font-size: 20px;
+  position: relative;
+  top: 17px;
+}
+
+.palceLand div {
+  padding: 5px 21px;
+}
+
+.palceLand {
+  display: flex;
+}
+
+.palceLand p {
+  margin-bottom: 2px;
+}
+section.tableMain p {
+  margin-bottom: 3px;
+  font-size: 15px;
+}
+.tableMain td{
+  padding: 10px 20px;
+}
+.tableMain .progress {
+  width: 155px;
+}

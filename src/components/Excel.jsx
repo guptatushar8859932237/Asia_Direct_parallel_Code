@@ -9,12 +9,14 @@ export default function Excel() {
   const [batchesFile, setBatchesFile] = useState(null);
   const [warehouseFile, setWarehouseFile] = useState(null);
   const [clientFile, setClientFile] = useState(null);
+  const [sageinvoice, setSageinvoice] = useState(null);
   const [loading, setLoading] = useState({
     freight: false,
     order: false,
     batches: false,
     warehouse: false,
     client: false,
+    sageinvoice:false,
   });
   const validateFile = (file) => {
     const allowedExtensions = ["xlsx", "xls"];
@@ -164,6 +166,25 @@ export default function Excel() {
                     <button
                       className="btn btn-primary mx-2"
                       onClick={() => handleUpload(clientFile, "upload-excel-client", "client")}
+                      disabled={loading.client}
+                    >
+                      {loading.client ? "Uploading..." : "Upload"}
+                    </button>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="freight_excel">
+                    <label>Sage Invoice Excel</label>
+                  </div>
+                  <div className="d-flex align-items-center">
+                    <input
+                      type="file"
+                      className="form-control"
+                      onChange={(e) => handleFileChange(e.target.files[0], setSageinvoice)}
+                    />
+                    <button
+                      className="btn btn-primary mx-2"
+                      onClick={() => handleUpload(sageinvoice, "UploadSageInvoiceLlist", "sageinvoice")}
                       disabled={loading.client}
                     >
                       {loading.client ? "Uploading..." : "Upload"}

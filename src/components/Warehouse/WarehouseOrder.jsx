@@ -275,6 +275,11 @@ export default function WarehouseOrder() {
                       onChange={handleSearch}
                     ></input>
                   </div>
+                  <div className="ms-1">
+                  <Button variant="contained" >
+                    Apply
+                  </Button>
+                  </div>
                 </div>
               </div>
             </div>
